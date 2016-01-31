@@ -1,0 +1,28 @@
+{
+  "name": "narcis-webdriver",
+  "version": "0.1.0",
+  "description": "A client for uploading screenshots to a narcis server using selenium-webdriver during node tests",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/deckar01/narcis-webdriver.git"
+  },
+  "keywords": [
+    "screenshot",
+    "diff",
+    "integration",
+    "test",
+    "visual",
+    "narcis",
+    "client"
+  ],
+  "author": "Jared Deckard",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/deckar01/narcis-webdriver/issues"
+  },
+  "homepage": "https://github.com/deckar01/narcis-webdriver"
+}
