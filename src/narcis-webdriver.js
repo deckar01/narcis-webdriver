@@ -89,7 +89,7 @@ NarcisWebdriver.prototype.upload = function() {
   if(!this.enabled) return;
 
   var projectLocation = url.parse(this.config.project);
-  var protocol = projectLocation.protocol;
+  var protocol = projectLocation.protocol.replace(':', '');
   var handler = NarcisWebdriver.protocolHandlers[protocol];
 
   if(!handler) {

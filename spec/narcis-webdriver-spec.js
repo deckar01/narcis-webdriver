@@ -92,26 +92,26 @@ describe("NarcisWebdriver", function() {
   it("should register protocol handlers", function() {
     var handlerSpy = jasmine.createSpy('handler');
 
-    NarcisWebdriver.registerProtocol('protocol:', handlerSpy);
+    NarcisWebdriver.registerProtocol('protocol', handlerSpy);
 
-    expect(NarcisWebdriver.protocolHandlers['protocol:']).toBe(handlerSpy);
+    expect(NarcisWebdriver.protocolHandlers['protocol']).toBe(handlerSpy);
     expect(handlerSpy.calls.count()).toEqual(0);
 
-    delete NarcisWebdriver['protocol:'];
+    delete NarcisWebdriver['protocol'];
   });
 
   it("should not upload to unregistered protocols", function() {
     var narcis = new NarcisWebdriver(config, targetPlatform, version);
 
     expect(function() { narcis.upload(); }).toThrow(
-      '"https:" is not currently supported!'
+      '"https" is not currently supported!'
     );
   });
 
   it("should upload screenshots using the protocol handler", function() {
     var promiseSpy = jasmine.createSpy('promise');
     var handlerSpy = jasmine.createSpy('handler').and.returnValue(promiseSpy);
-    NarcisWebdriver.registerProtocol('https:', handlerSpy);
+    NarcisWebdriver.registerProtocol('https', handlerSpy);
 
     var narcis = new NarcisWebdriver(config, targetPlatform, version);
     narcis.screenshots = {
