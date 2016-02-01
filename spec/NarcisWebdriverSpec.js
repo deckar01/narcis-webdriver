@@ -48,6 +48,8 @@ describe("NarcisWebdriver", function() {
     narcis.setDriver(driver);
 
     expect(narcis.driver).toBe(driver);
+
+    driver.quit();
   });
 
   it("should save screenshots", function() {
@@ -77,5 +79,7 @@ describe("NarcisWebdriver", function() {
       'page-example-2': 'data:image/png;base64,screenshot+example+2',
       'page-example-3': 'data:image/png;base64,screenshot+example+3',
     });
+
+    driver.quit();
   });
 });
