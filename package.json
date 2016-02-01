@@ -28,5 +28,8 @@
   "devDependencies": {
     "jasmine": "^2.4.1",
     "selenium-webdriver": "^2.48.2"
+  },
+  "dependencies": {
+    "promise": "^7.1.1"
   }
 }
