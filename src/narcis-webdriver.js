@@ -96,12 +96,13 @@ NarcisWebdriver.prototype.upload = function() {
     throw '"' + protocol + '" is not currently supported!';
   }
 
-  return handler(
-    this.config,
-    this.screenshots,
-    this.targetPlatform,
-    this.version
-  );
+  var data = {
+    targetPlatform: this.targetPlatform,
+    version:        this.version,
+    screenshots:    this.screenshots,
+  };
+
+  return handler(this.config, data);
 }
 
 
@@ -150,11 +151,16 @@ NarcisWebdriver.registerProtocol = function(protocol, handler) {
  * @param {Object} config.authentication - Authentication
  *   credentials required to connect to the narcis server.
  *
- * @param {string} targetPlatform - The identifier for the
- *   current platform the tests are running on.
+ * @param {Object} data - The screenshot data.
  *
- * @param {string} version - The identifier for the current
+ * @param {string} data.targetPlatform - The identifier for
+ *   the current platform the tests are running on.
+ *
+ * @param {string} data.version - The identifier for the current
  *   version of the project. (version number or commit hash)
+ *
+ * @param {Array<string>} data.screenshots - The array of
+ *   base64 encoded data URL screenshots.
  */
 
 module.exports = NarcisWebdriver;

@@ -126,9 +126,11 @@ describe("NarcisWebdriver", function() {
     expect(result).toBe(promiseSpy);
     expect(handlerSpy).toHaveBeenCalledWith(
       config,
-      narcis.screenshots,
-      targetPlatform,
-      version
+      {
+        targetPlatform: targetPlatform,
+        version:        version,
+        screenshots:    narcis.screenshots,
+      }
     );
   });
 });
