@@ -1,3 +1,6 @@
+var url = require('url');
+var https = require('https');
+
 /**
  * This class collect screenshots from selenium-webdriver
  *   and uploads them to a narcis server.
@@ -10,11 +13,8 @@
  * @param {string} config.project - The URL to a project
  *   on a narcis server.
  *
- * @param {string} config.username - The name of a user on
- *   the narcis server with permission to edit the project.
- *
- * @param {string} config.password - The password for the
- *   given username on the narcis server.
+ * @param {Object} config.authentication - Authentication
+ *   credentials required to connect to the narcis server.
  *
  * @param {boolean} [config.enabled=true] - The password for
  *   the given username on the narcis server.
@@ -26,9 +26,7 @@
  *   version of the project. (version number or commit hash)
  */
 function NarcisWebdriver(config, targetPlatform, version) {
-  this.project =        config['project'];
-  this.username =       config['username'];
-  this.password =       config['password'];
+  this.config =         config;
   this.enabled =        config['enabled'] !== false;
   this.targetPlatform = targetPlatform;
   this.version =        version;
@@ -84,11 +82,79 @@ NarcisWebdriver.prototype.saveScreenshot = function(page) {
  * @memberof NarcisWebdriver
  * @instance
  * @public
+ *
+ * @return {Promise} A promise that the screenshots are uploaded.
  */
 NarcisWebdriver.prototype.upload = function() {
   if(!this.enabled) return;
 
-  throw 'NarcisWebdriver.prototype.upload not yet implemented!'
+  var projectLocation = url.parse(this.config.project);
+  var protocol = projectLocation.protocol;
+  var handler = NarcisWebdriver.protocolHandlers[protocol];
+
+  if(!handler) {
+    throw '"' + protocol + '" is not currently supported!';
+  }
+
+  return handler(
+    this.config,
+    this.screenshots,
+    this.targetPlatform,
+    this.version
+  );
 }
+
+
+/**
+ * The dictionary of narcis server protocols that have been
+ *   registered.
+ *
+ * @member {Object}
+ * @memberof NarcisWebdriver
+ * @static
+ * @private
+ */
+NarcisWebdriver.protocolHandlers = {};
+
+
+/**
+ * This registers a protocol that is used to send data to a
+ *   narcis server.
+ *
+ * @function registerProtocol
+ * @memberof NarcisWebdriver
+ * @static
+ * @public
+ *
+ * @param {string} protocol - The request protocol name.
+ *
+ * @param {NarcisWebdriver~ProtocolHandler} handler - The
+ *   protocol upload implementation.
+ */
+NarcisWebdriver.registerProtocol = function(protocol, handler) {
+  NarcisWebdriver.protocolHandlers[protocol] = handler;
+}
+
+/**
+ * This handles connecting to a narcis server and uploading
+ *   screenshots over a specific protocol.
+ *
+ * @callback NarcisWebdriver~ProtocolHandler
+ *
+ * @param {Object} config - The information required to
+ *   connect to a narcis server.
+ *
+ * @param {string} config.project - The URL to a project
+ *   on a narcis server.
+ *
+ * @param {Object} config.authentication - Authentication
+ *   credentials required to connect to the narcis server.
+ *
+ * @param {string} targetPlatform - The identifier for the
+ *   current platform the tests are running on.
+ *
+ * @param {string} version - The identifier for the current
+ *   version of the project. (version number or commit hash)
+ */
 
 module.exports = NarcisWebdriver;
