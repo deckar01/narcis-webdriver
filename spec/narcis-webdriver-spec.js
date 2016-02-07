@@ -4,8 +4,9 @@ describe("NarcisWebdriver", function() {
   var NarcisWebdriver = require('../src/narcis-webdriver');
 
   var config;
-  var targetPlatform;
-  var version;
+  var platform;
+  var branch;
+  var build;
 
   beforeEach(function() {
     config = {
@@ -16,12 +17,17 @@ describe("NarcisWebdriver", function() {
       },
       enabled: true,
     };
-    targetPlatform = 'target-platform-example';
-    version = '1.0.0';
+    platform = {
+      device: 'iPhone 6 portrait',
+      os: 'OS X 10.10',
+      browser: 'iphone 9.0'
+    };
+    branch = 'master';
+    build = '0000000'
   });
 
   it("should initialize from the constructor", function() {
-    var narcis = new NarcisWebdriver(config, targetPlatform, version);
+    var narcis = new NarcisWebdriver(config, platform, branch, build);
 
     expect(narcis.config.project).toEqual(
       'https://narcis.server.example/project-name'
@@ -31,8 +37,13 @@ describe("NarcisWebdriver", function() {
       password: 'password.example',
     });
     expect(narcis.enabled).toEqual(true);
-    expect(narcis.targetPlatform).toEqual('target-platform-example');
-    expect(narcis.version).toEqual('1.0.0');
+    expect(narcis.platform).toEqual({
+      device: 'iPhone 6 portrait',
+      os: 'OS X 10.10',
+      browser: 'iphone 9.0'
+    });
+    expect(narcis.branch).toEqual('master');
+    expect(narcis.build).toEqual('0000000');
 
     expect(narcis.driver).toBeNull();
     expect(narcis.screenshots).toEqual({});
@@ -42,13 +53,13 @@ describe("NarcisWebdriver", function() {
     delete config.enabled;
     expect(config.enabled).toBeUndefined();
 
-    var narcis = new NarcisWebdriver(config, targetPlatform, version);
+    var narcis = new NarcisWebdriver(config, platform, branch, build);
 
     expect(narcis.enabled).toEqual(true);
   });
 
   it("should set a webdriver", function() {
-    var narcis = new NarcisWebdriver(config, targetPlatform, version);
+    var narcis = new NarcisWebdriver(config, platform, branch, build);
     var driver = new webdriver.Builder().forBrowser('firefox').build();
 
     narcis.setDriver(driver);
@@ -59,7 +70,7 @@ describe("NarcisWebdriver", function() {
   });
 
   it("should save screenshots", function() {
-    var narcis = new NarcisWebdriver(config, targetPlatform, version);
+    var narcis = new NarcisWebdriver(config, platform, branch, build);
     var driver = new webdriver.Builder().forBrowser('firefox').build();
 
     var screenshotCount = 0;
@@ -101,7 +112,7 @@ describe("NarcisWebdriver", function() {
   });
 
   it("should not upload to unregistered protocols", function() {
-    var narcis = new NarcisWebdriver(config, targetPlatform, version);
+    var narcis = new NarcisWebdriver(config, platform, branch, build);
 
     expect(function() { narcis.upload(); }).toThrow(
       '"https" is not currently supported!'
@@ -113,7 +124,7 @@ describe("NarcisWebdriver", function() {
     var handlerSpy = jasmine.createSpy('handler').and.returnValue(promiseSpy);
     NarcisWebdriver.registerProtocol('https', handlerSpy);
 
-    var narcis = new NarcisWebdriver(config, targetPlatform, version);
+    var narcis = new NarcisWebdriver(config, platform, branch, build);
     narcis.screenshots = {
       'page-example-1': 'data:image/png;base64,screenshot+example+1',
       'page-example-2': 'data:image/png;base64,screenshot+example+2',
@@ -127,8 +138,9 @@ describe("NarcisWebdriver", function() {
     expect(handlerSpy).toHaveBeenCalledWith(
       config,
       {
-        targetPlatform: targetPlatform,
-        version:        version,
+        platform:       platform,
+        branch:         branch,
+        build:          build,
         screenshots:    narcis.screenshots,
       }
     );

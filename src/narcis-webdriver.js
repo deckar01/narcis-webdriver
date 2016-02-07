@@ -19,19 +19,30 @@ var https = require('https');
  * @param {boolean} [config.enabled=true] - The password for
  *   the given username on the narcis server.
  *
- * @param {string} targetPlatform - The identifier for the
- *   current platform the tests are running on.
+ * @param {Object} platform - The platform the tests are
+ *   running on.
  *
- * @param {string} version - The identifier for the current
- *   version of the project. (version number or commit hash)
+ * @param {string} platform.device - The name of the device
+ *   the tests are running on.
+ *
+ * @param {string} platform.os - The name of the operating
+ *   system the tests are running on.
+ *
+ * @param {string} platform.browser - The name of the browser
+ *   the tests are running on.
+ *
+ * @param {string} branch - The name of the current branch.
+ *
+ * @param {string} build - The hash of the current build.
  */
-function NarcisWebdriver(config, targetPlatform, version) {
-  this.config =         config;
-  this.enabled =        config['enabled'] !== false;
-  this.targetPlatform = targetPlatform;
-  this.version =        version;
-  this.driver =         null;
-  this.screenshots =    {};
+function NarcisWebdriver(config, platform, branch, build) {
+  this.config =      config;
+  this.enabled =     config['enabled'] !== false;
+  this.platform =    platform;
+  this.branch =      branch;
+  this.build =       build;
+  this.driver =      null;
+  this.screenshots = {};
 }
 
 
@@ -97,9 +108,10 @@ NarcisWebdriver.prototype.upload = function() {
   }
 
   var data = {
-    targetPlatform: this.targetPlatform,
-    version:        this.version,
-    screenshots:    this.screenshots,
+    platform:    this.platform,
+    branch:      this.branch,
+    build:       this.build,
+    screenshots: this.screenshots,
   };
 
   return handler(this.config, data);
@@ -153,11 +165,21 @@ NarcisWebdriver.registerProtocol = function(protocol, handler) {
  *
  * @param {Object} data - The screenshot data.
  *
- * @param {string} data.targetPlatform - The identifier for
- *   the current platform the tests are running on.
+ * @param {Object} data.platform - The platform the tests
+ *   are running on.
  *
- * @param {string} data.version - The identifier for the current
- *   version of the project. (version number or commit hash)
+ * @param {string} data.platform.device - The name of the
+ *   device the tests are running on.
+ *
+ * @param {string} data.platform.os - The name of the
+ *   operating system the tests are running on.
+ *
+ * @param {string} data.platform.browser - The name of the
+ *   browser the tests are running on.
+ *
+ * @param {string} data.branch - The name of the current branch.
+ *
+ * @param {string} data.build - The hash of the current build.
  *
  * @param {Array<string>} data.screenshots - The array of
  *   base64 encoded data URL screenshots.
